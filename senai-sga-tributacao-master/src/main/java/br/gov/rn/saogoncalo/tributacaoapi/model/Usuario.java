@@ -1,11 +1,17 @@
 package br.gov.rn.saogoncalo.tributacaoapi.model;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "usuarios")
-public class Usuario {
+public class Usuario implements UserDetails {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -13,6 +19,14 @@ public class Usuario {
     private String email;
     private String matricula;
     private String senha;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "perfis_usuarios", joinColumns = @JoinColumn(name = "id_usuario"), inverseJoinColumns = @JoinColumn(name = "id_perfil"))
+    private List<Perfil> perfis;
+
+    public Usuario(){
+        perfis = new ArrayList<>();
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -43,6 +57,14 @@ public class Usuario {
         this.nome = nome;
     }
 
+    public List<Perfil> getPerfis() {
+        return perfis;
+    }
+
+    public void setPerfis(List<Perfil> perfis) {
+        this.perfis = perfis;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -67,4 +89,40 @@ public class Usuario {
         this.senha = senha;
     }
 
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return perfis;
+    }
+
+    @Override
+    public String getPassword() {
+        return senha;
+    }
+
+    @Override
+    public String getUsername() {
+        return matricula;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
