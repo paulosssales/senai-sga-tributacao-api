@@ -1,5 +1,6 @@
 package br.gov.rn.saogoncalo.tributacaoapi.model;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -24,6 +25,7 @@ public class Usuario implements UserDetails {
     @JoinTable(name = "perfis_usuarios", joinColumns = @JoinColumn(name = "id_usuario"), inverseJoinColumns = @JoinColumn(name = "id_perfil"))
     private List<Perfil> perfis;
 
+    @JsonIgnore
     public Usuario(){
         perfis = new ArrayList<>();
     }
